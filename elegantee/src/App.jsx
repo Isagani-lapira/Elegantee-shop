@@ -1,11 +1,21 @@
 import { Login } from '@mui/icons-material';
 import './App.css'
 import LoginPage from './elegantee/pages/LoginPage'
-import {createBrowserRouter,RouterProvider} from "react-router-dom";
+import {createBrowserRouter,Navigate,RouterProvider} from "react-router-dom";
 import SamplePage from './elegantee/pages/rar';
-import AuthProvider from './elegantee/auth/AuthProvider';
+import AuthProvider, { useAuth } from './elegantee/auth/AuthProvider';
+
+
 function App() {
 
+  const AuthenticatedRoute = ({children})=>{
+    const {isAuthenticated} = useAuth();
+
+    if(isAuthenticated)
+      return children;
+
+    return <Navigate to="/"/>
+  }
   const router = createBrowserRouter([
     {
       path: '/',
@@ -13,7 +23,9 @@ function App() {
     },
     {
       path:'/rar',
-      element: <SamplePage/>
+      element: (<AuthenticatedRoute>
+                  <SamplePage/>
+                </AuthenticatedRoute>)
     }
   ])
     return (
