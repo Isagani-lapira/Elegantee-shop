@@ -3,6 +3,7 @@ import './App.css'
 import LoginPage from './elegantee/pages/LoginPage'
 import {createBrowserRouter,RouterProvider} from "react-router-dom";
 import SamplePage from './elegantee/pages/rar';
+import AuthProvider from './elegantee/auth/AuthProvider';
 function App() {
 
   const router = createBrowserRouter([
@@ -17,7 +18,10 @@ function App() {
   ])
     return (
       <div className="App h-full">
-        <RouterProvider router={router}/>
+        <AuthProvider>
+          <RouterProvider router={router}/>
+        </AuthProvider>
+        
       </div>
     )
 }
