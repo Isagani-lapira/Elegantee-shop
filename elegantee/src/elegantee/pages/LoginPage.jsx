@@ -9,7 +9,7 @@ import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../auth/AuthProvider';
+import { useAuth } from '../provider/AuthProvider';
 
 const LoginPage = React.memo(() =>{
 
@@ -41,6 +41,7 @@ const LoginPage = React.memo(() =>{
 
         return errors;
     }
+
     return (
         <div className="h-full flex flex-col items-center justify-center">
             <Formik 
