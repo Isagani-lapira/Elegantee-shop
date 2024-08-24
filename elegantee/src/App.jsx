@@ -3,7 +3,7 @@ import './App.css'
 import LoginPage from './elegantee/pages/LoginPage'
 import {createBrowserRouter,Navigate,RouterProvider} from "react-router-dom";
 import SamplePage from './elegantee/pages/rar';
-import AuthProvider, { useAuth } from './elegantee/auth/AuthProvider';
+import AuthProvider, { useAuth } from './elegantee/provider/AuthProvider';
 
 
 function App() {
