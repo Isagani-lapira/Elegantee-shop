@@ -10,6 +10,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../provider/AuthProvider';
+import { Link } from 'react-router-dom';
 
 const LoginPage = React.memo(() =>{
 
@@ -43,7 +44,7 @@ const LoginPage = React.memo(() =>{
     }
 
     return (
-        <div className="h-full flex flex-col items-center justify-center">
+        <div className="h-max flex flex-col gap-2 items-center justify-center">
             <Formik 
                 initialValues={{ username: '', password: '' }}  
                 onSubmit={handleSubmitLogin}
@@ -86,12 +87,22 @@ const LoginPage = React.memo(() =>{
                                 label="Password"
                             />
                         </FormControl>
-                        <button type='submit' className='bg-blue-500 py-3 text-white rounded-md hover:bg-blue-600  duration-300 transition-all ease-in-out'>LOG IN</button>
+                        <button type='submit' className='bg-accent-color py-3 text-white rounded-md hover:bg-accent-color-hovered  duration-300 transition-all ease-in-out'>LOG IN</button>
                     </Form>
                     )
                 }
                
             </Formik>
+            <span>Or</span>
+            <div>
+                <button>
+                    Don’t have an account?
+                    <Link to="/register" className='text-accent-color hover:font-medium'> Sign up fo free!</Link>
+                </button>
+                
+            </div>
+            
+            
         </div>
     )
 })
