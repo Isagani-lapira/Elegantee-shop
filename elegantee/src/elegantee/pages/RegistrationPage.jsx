@@ -6,20 +6,34 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useState } from 'react';
 import dayjs from 'dayjs';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { registerAccount } from '../api/RegistrationAPI';
 
 export default function RegistrationPage(){
     const [selectedDate, setSelectedDate] = useState();
 
     const handleDateChange = (dateSelected) => {
-        const formattedDate = dateSelected ? dayjs(dateSelected).format('YYYY/MM/DD') : '';
+        const formattedDate = dateSelected ? dayjs(dateSelected).format('YYYY-MM-DD') : '';
         setSelectedDate(formattedDate);
     };
 
-
-    const handleSubmitLogin = (values)=>{
+    const navigate = useNavigate();
+    const handleSubmitLogin = async (values)=>{
         values.birthdate = selectedDate;
-        console.log(values)
+
+        const user = { 'username':values.username,'password':values.password }
+        const accountDetails = {
+            'firstname':values.firstname,
+            'lastname':values.lastname,
+            'emailAddress':values.emailAddress,
+            'birthDate':selectedDate
+        }
+
+        const requestBody = {user,accountDetails}
+        const result = await registerAccount(requestBody)
+        if(result.status == 201) navigate("/")
+        
+
     }
 
     return (
