@@ -8,9 +8,11 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerAccount } from '../api/RegistrationAPI';
+import ReactLoading from 'react-loading';
 
 export default function RegistrationPage(){
     const [selectedDate, setSelectedDate] = useState();
+    const [isLoadingShown,setisLoadingShown] = useState(false)
 
     const handleDateChange = (dateSelected) => {
         const formattedDate = dateSelected ? dayjs(dateSelected).format('YYYY-MM-DD') : '';
@@ -18,41 +20,58 @@ export default function RegistrationPage(){
     };
 
     const navigate = useNavigate();
-    const handleSubmitLogin = async (values)=>{
+    const handleSubmitLogin = (values,{setErrors})=>{
         values.birthdate = selectedDate;
 
-        const user = { 'username':values.username,'password':values.password }
+        const user = { 'username':values.username,'password':values.password,'roles':'USERS' }
         const accountDetails = {
             'firstname':values.firstname,
             'lastname':values.lastname,
             'emailAddress':values.emailAddress,
             'birthDate':selectedDate
         }
-
-        const requestBody = {user,accountDetails}
-        const result = await registerAccount(requestBody)
-        if(result.status == 201) navigate("/")
         
+        sendRegistrationRequest(user,accountDetails,setErrors)
+    }
 
+    const sendRegistrationRequest = async(user,accountDetails,setErrors)=>{
+        setisLoadingShown(true)
+        try{
+            const requestBody = {user,accountDetails}
+            const result = await registerAccount(requestBody)
+            if(result.status == 201) navigate("/")
+        }catch(error){
+            if(error.response && error.response.status==400){
+                const apiErrors = error.response.data;
+                const fieldErrors = {}
+                for(const [key, message] of Object.entries(apiErrors)){
+                    const fieldName = key.replace(/^[^.]+./,'') //removing the user. and accountdetails. in the key
+                    fieldErrors[fieldName] = message;
+                }
+                setErrors(fieldErrors) //displaying errors and showing message comming from the backend api message
+            }
+        }
+
+        setisLoadingShown(false)
     }
 
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center h-max">
             <div className="p-5 flex gap-3 shadow-lg w-3/4">
                 <div className="right-panel flex-1 flex flex-col justify-between">
                     <div>
-                        <div className='mb-10'>
+                        <div className='mb-10 text-center md:text-left'>
                             <h2 className='text-3xl font-semibold'>Create account</h2>
                             <span>Join our community of glamorus</span>
                         </div>
                         <Formik
                             initialValues={{firstname:'',lastname: '',
-                                emailAddress:'', birthdate: selectedDate,
+                                emailAddress:'', birthDate: selectedDate,
                                 username: '', password: ''
                             }}
                             onSubmit={handleSubmitLogin}
                         >
-                            {({values,handleChange})=>(
+                            {({values,handleChange,handleBlur,errors, touched})=>(
                                     <Form>
                                         <div className=' grid grid-cols-2 gap-2'>
                                             <TextField
@@ -78,15 +97,18 @@ export default function RegistrationPage(){
                                                 label="Email Address"
                                                 value={values.emailAddress}
                                                 onChange={handleChange}
+                                                error={touched.emailAddress && !!errors.emailAddress}
+                                                helperText = {touched.emailAddress &&  errors.emailAddress}
                                             />
                                             <LocalizationProvider required dateAdapter={AdapterDayjs}>
                                                 <DatePicker
-                                                    id='birthdate'
-                                                    name='birthdate'
+                                                    id='birthDate'
+                                                    name='birthDate'
                                                     maxDate={dayjs()} // not allowed advance date
                                                     value={values.selectedDate}
                                                     onChange={handleDateChange}
                                                     label="Date of Birth"
+                                                    error
                                                     renderInput={(params) => <TextField {...params} />}
                                                 />
                                             </LocalizationProvider>
@@ -99,6 +121,8 @@ export default function RegistrationPage(){
                                                 label="Username"
                                                 value={values.username}
                                                 onChange={handleChange}
+                                                error={touched.username && !!errors.username}
+                                                helperText = {touched.user && errors.username}
                                             />
                                             <TextField
                                                 required
@@ -108,6 +132,8 @@ export default function RegistrationPage(){
                                                 label="Password"
                                                 value={values.password}
                                                 onChange={handleChange}
+                                                error = {touched.password && !!errors.password}
+                                                helperText = {touched.password && errors.password}
                                             />
                                         </div>
                                         <button type='submit' className='w-full mt-3 py-3 bg-blue-500 
@@ -126,6 +152,15 @@ export default function RegistrationPage(){
                     <img src={maleFemaleImage} alt="Illustration of male and female" />
                 </div>
             </div>
+
+            {isLoadingShown &&
+                <div className='absolute -top-0 h-full w-full bg-black  bg-opacity-50 flex flex-col gap-10 items-center justify-center '>
+                    <ReactLoading type={'spinningBubbles'} color={'#FFFFFF'} height={'5%'} width={'5%'} />
+                <span className='font-bold text-lg md:text-2xl text-white'>Creating new account</span>
+                </div>
+            }
+            
+            
         </div>
     )
 }
