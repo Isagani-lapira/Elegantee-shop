@@ -67,9 +67,10 @@ export default function Navbar(){
                 <li className={currentPage == '/contact'? 'font-bold text-active': 'text-inactive'}><Link to="/contact">Contact</Link></li>
             </ul>
 
-            {!auth.isAuthenticated &&
                 <div className="flex gap-5 items-center text-accent-color">
-                    <Link to="/" className=" inline-flex items-center font-medium gap-2"><FaRegUser /> Login/Register</Link>
+                {auth.isAuthenticated? <p>{auth.accountUsername}</p>:
+                  <Link to="/" className=" inline-flex items-center font-medium gap-2"><FaRegUser /> Login/Register</Link>
+                }
                     <Search>
                         <SearchIconWrapper>
                             <SearchIcon />
@@ -80,7 +81,6 @@ export default function Navbar(){
                             />
                     </Search>
                 </div>
-            }
             
         </div>
     )
