@@ -9,6 +9,7 @@ const AuthProvider = ({children})=>{
         const savedAuth = sessionStorage.getItem('isAuthenticated');
         return savedAuth === 'true';
     })
+    const [accountUsername,setUsername] = useState('');
 
     useEffect(()=>{
         sessionStorage.setItem('isAuthenticated',isAuthenticated);
@@ -28,6 +29,8 @@ const AuthProvider = ({children})=>{
                             config.headers.Authorization = token;
                             return config;
                         })
+
+                        setUsername(username)
                         return true;
                     }
                 })
@@ -35,7 +38,7 @@ const AuthProvider = ({children})=>{
         return false;
     }
     return (
-        <AuthContext.Provider value={{authenticateUser,isAuthenticated}}>
+        <AuthContext.Provider value={{authenticateUser,isAuthenticated,accountUsername}}>
             {children}
         </AuthContext.Provider>
     )
